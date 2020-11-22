@@ -1,0 +1,17 @@
+@import "../../style/vars";
+
+.tabs {
+  display: flex;
+}
+
+.tab {
+  padding: 10px 10px;
+  cursor: pointer;
+  background-color: $blue;
+  &:first-child {
+    margin-left: 0;
+  }
+  &.active {
+    background-color: #fff;
+  }
+}
