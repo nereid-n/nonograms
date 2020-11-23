@@ -2,21 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b3d55bc7-d6d8-4483-ae4d-2b536457343f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/components/form/Input.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/tabs/Tabs.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/tabs/tabs.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/Home.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/auth/Auth.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/auth/auth.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/style/_vars.sass" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/form/Checkbox.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/store/auth/actions.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/store/auth/reducers.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/store/auth/types.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/store/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/form/Input.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/form/Input.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/tabs/Tabs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/tabs/Tabs.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/tabs/tabs.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/tabs/tabs.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logo.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/auth/Auth.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/auth/Auth.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,9 +30,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="TypeScript JSX File" />
         <option value="Sass File" />
         <option value="SCSS File" />
+        <option value="TypeScript JSX File" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
@@ -74,12 +76,16 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1606052079561</updated>
-      <workItem from="1606052083946" duration="12433000" />
+      <workItem from="1606052083946" duration="12531000" />
+      <workItem from="1606123914275" duration="19756000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.env" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -91,5 +97,6 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>

@@ -7,13 +7,16 @@ import {
 import './App.css';
 import Auth from "./pages/auth/Auth";
 import Home from "./pages/Home";
+import { connect } from 'react-redux';
+import {checkToken} from "./store/auth/actions";
+import {authState} from "./store/auth/types";
+import {stateType} from "./store";
 
-const auth = false;
-
-function App() {
+function App(props: props) {
+  props.checkToken();
   return (
     <div className="App">
-      {auth
+      {props.auth
         ? <Switch>
           <Route path='/' component={Home} />
         </Switch>
@@ -26,4 +29,16 @@ function App() {
   );
 }
 
-export default App;
+export default connect(
+  (state: stateType): authState => ({
+    auth: state.auth.auth
+  }),
+  dispatch => ({
+    checkToken: () => dispatch(checkToken())
+  })
+)(App);
+
+interface props {
+  auth: boolean,
+  checkToken: () => void
+}

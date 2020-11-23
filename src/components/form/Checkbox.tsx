@@ -1,28 +1,27 @@
 import React, {ChangeEvent} from "react";
 
-function Input(props: props) {
+function Checkbox(props: props) {
   return (
     <div>
-      <label htmlFor={props.data.id}>{props.data.label}</label>
       <input
         id={props.data.id}
         name={props.data.name}
-        type={props.data.type}
+        type="checkbox"
         onChange={(e) => props.onChange(e)}/>
+      <label htmlFor={props.data.id}>{props.data.label}</label>
     </div>
   );
 }
 
-export default Input;
+export default Checkbox;
 
-export interface dataInput {
+export interface dataCheckbox {
   name: string,
-  type: string,
   id: string,
   label: string
 }
 
 interface props {
-  data: dataInput,
+  data: dataCheckbox,
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
 }

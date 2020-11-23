@@ -1,15 +1,6 @@
 import React, {useState} from "react";
 import './tabs.scss';
 
-export interface tab {
-  name: string
-}
-
-interface props {
-  tabs: tab[],
-  children: React.ReactNode
-}
-
 function Tabs(props: props) {
   const [current, setCurrent] = useState(0);
 
@@ -38,3 +29,12 @@ function Tabs(props: props) {
 }
 
 export default Tabs;
+
+export interface tab {
+  name: string
+}
+
+interface props {
+  tabs: tab[],
+  children: React.ReactNode
+}
