@@ -11,18 +11,27 @@ import { connect } from 'react-redux';
 import {checkToken} from "./store/auth/actions";
 import {authState} from "./store/auth/types";
 import {stateType} from "./store";
+import Header from "./components/layout/header/Header";
+import NonogramNew from "./pages/NonogramNew";
 
 function App(props: props) {
   props.checkToken();
   return (
     <div className="App">
       {props.auth
-        ? <Switch>
-          <Route path='/' component={Home} />
-        </Switch>
+        ? <div className="root">
+          <Header/>
+          <main className="main">
+            <Switch>
+              <Route path='/nonograms/new' component={NonogramNew} />
+              <Route path='/nonograms/:page' component={Home} />
+              {/*<Redirect from="/" to="/nonograms/0" />*/}
+            </Switch>
+          </main>
+        </div>
         : <Switch>
           <Route path='/auth' component={Auth} />
-          <Redirect to="/auth" />
+          {/*<Redirect to="/auth" />*/}
         </Switch>
       }
     </div>

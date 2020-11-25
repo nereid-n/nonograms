@@ -4,14 +4,14 @@ import axios from 'axios';
 export function login(data: loginData, history: any): any {
   return (dispatch: (action: auth) => void) => {
     axios.post(`${process.env.REACT_APP_API}login`, data)
-      .then((res) => {
+      .then(res => {
         localStorage.setItem("token", res.data.token);
         dispatch({
           type: AUTH.LOGIN,
         });
         history.push('/');
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }
