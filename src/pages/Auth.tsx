@@ -1,11 +1,11 @@
 import React, {FormEvent, useState} from 'react';
 import { connect } from 'react-redux';
-import Tabs, {tab} from "../../components/tabs/Tabs";
-import "./auth.scss";
-import Input, {dataInput} from "../../components/form/Input";
-import Checkbox, {dataCheckbox} from "../../components/form/Checkbox";
-import {loginData} from "../../store/auth/types";
-import {login} from "../../store/auth/actions";
+import Tabs, {tab} from "../components/tabs/Tabs";
+import "../style/auth.scss";
+import Input, {dataInput} from "../components/form/Input";
+import Checkbox, {dataCheckbox} from "../components/form/Checkbox";
+import {loginData} from "../store/auth/types";
+import {login} from "../store/auth/actions";
 import { useHistory } from "react-router-dom";
 
 function Auth(props: props) {

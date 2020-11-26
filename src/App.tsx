@@ -5,7 +5,7 @@ import {
   Redirect
 } from "react-router-dom"
 import './App.css';
-import Auth from "./pages/auth/Auth";
+import Auth from "./pages/Auth";
 import Home from "./pages/Home";
 import { connect } from 'react-redux';
 import {checkToken} from "./store/auth/actions";
