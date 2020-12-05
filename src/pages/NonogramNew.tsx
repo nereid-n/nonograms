@@ -9,29 +9,33 @@ function NonogramNew() {
   const defaultWidth = 10;
   const defaultHeight = 10;
   const defaultColor = '#000';
+
+  const svg = useRef<SVGSVGElement>(null);
+
   const [prepare, setPrepare] = useState(false);
   const [prepareData, setPrepareData] = useState({width: defaultWidth, height: defaultHeight, color: false});
   const [svgSize, setSvgSize] = useState({width: defaultWidth * cellSize, height: defaultHeight * cellSize});
   const [svgData, setSvgData] = useState<svgData[]>([]);
-  const svg = useRef<SVGSVGElement>(null);
   const [colors, setColors] = useState([defaultColor]);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [currentColorPicker, setCurrentColorPicker] = useState(defaultColor);
   const [currentColorPickerIndex, setCurrentColorPickerIndex] = useState(0);
   const [currentColor, setCurrentColor] = useState(0);
   const [cells, setCells] = useState<NodeListOf<SVGRectElement>>();
+
   useEffect(() => {
     if (prepare && svg && svg.current) {
       const svgWidth = prepareData.width * cellSize;
       const svgHeight = prepareData.height * cellSize;
       setSvgSize({width: svgWidth, height: svgHeight});
-      for (let i = 0; i < svgWidth; i += cellSize) {
-        for (let j = 0; j < svgHeight; j += cellSize) {
+      for (let i = 0; i < svgHeight; i += cellSize) {
+        for (let j = 0; j < svgWidth; j += cellSize) {
           setSvgData(prev => [...prev, {
             width: cellSize,
             height: cellSize,
             x: j,
-            y: i
+            y: i,
+            fill: null
           }]);
         }
       }
@@ -40,9 +44,10 @@ function NonogramNew() {
   useEffect(() => {
     setCells(document.querySelectorAll('#svgImg rect'));
   }, [svgData]);
+
   function createSvg(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setPrepare(true)
+    setPrepare(true);
   }
   function openColorPicker(color: string, index: number) {
     setShowColorPicker(true);
@@ -63,7 +68,7 @@ function NonogramNew() {
   function draw(e: React.MouseEvent<SVGRectElement, MouseEvent>) {
     let target = e.target as SVGRectElement;
     let index = getCellIndex(target);
-    let clear = svgData[index].fill !== undefined;
+    let clear = svgData[index].fill !== null;
     changeCellColor(target, clear);
     const mousemove = (e: MouseEvent) => {
       const parent = target.closest('#svgImg');
@@ -95,12 +100,116 @@ function NonogramNew() {
     let newSvgData = [...svgData];
     let index = getCellIndex(target);
     if (clear) {
-      delete newSvgData[index].fill;
+      newSvgData[index].fill = null;
     } else {
       newSvgData[index].fill = colors[currentColor];
     }
     setSvgData(newSvgData);
   }
+  function save() {
+    if (svg && svg.current) {
+      const svgClone = svg.current.cloneNode(true) as SVGSVGElement;
+      const svgImg = svgClone.firstChild as SVGGElement;
+      let leftNumber: svgNumbers[][] = [[]];
+      let topNumber: svgNumbers[][] = [[]];
+      fillNumbers(leftNumber);
+      fillNumbers(topNumber, 'column');
+      const maxLeft = findMaxNumbers(leftNumber);
+      const leftNumberSvg = createNumbers(leftNumber, maxLeft);
+      svgClone.appendChild(leftNumberSvg);
+      const maxTop = findMaxNumbers(topNumber);
+      const topNumberSvg = createNumbers(topNumber, maxTop, 'top');
+      svgClone.appendChild(topNumberSvg);
+      const spacingTop = maxTop * cellSize;
+      const spacingLeft = maxLeft * cellSize;
+      svgImg.setAttribute('transform', `translate(${spacingLeft} ${spacingTop})`);
+      leftNumberSvg.setAttribute('transform', `translate(0 ${spacingTop})`);
+      topNumberSvg.setAttribute('transform', `translate(${spacingLeft})`);
+      svgClone.setAttribute('width', String(svgSize.width + spacingLeft));
+      svgClone.setAttribute('height', String(svgSize.height + spacingTop));
+      console.log(svgClone);
+    }
+  }
+  function fillNumbers(numbers: svgNumbers[][], direction?: string) {
+    let row = 0;
+    let fill = null;
+    let countFill = 0;
+    let iMax = prepareData.height;
+    let jMax = prepareData.width;
+    if (direction === 'column') {
+      iMax = prepareData.width;
+      jMax = prepareData.height;
+    }
+    for (let i = 0; i < iMax; i++) {
+      for (let j = 0; j < jMax; j++) {
+        let cellIndex;
+        if (direction === 'column') {
+          cellIndex = i + j * prepareData.width;
+        } else {
+          cellIndex = j + i * prepareData.width;
+        }
+        const currentFill = svgData[cellIndex].fill;
+        if (i !== row) {
+          row = i;
+          countFill = 0;
+          fill = null;
+          numbers.push([]);
+        }
+        if (currentFill !== fill) {
+          if (countFill > 0 && fill !== null) {
+            numbers[i].push({
+              count: countFill,
+              fill: fill
+            });
+          }
+          countFill = 0;
+          fill = currentFill;
+        }
+        if (fill !== null) {
+          countFill++;
+        }
+      }
+    }
+  }
+  function createNumbers(numbers: svgNumbers[][], max: number, place = 'left'): HTMLElement {
+    const g = document.createElement('g');
+    for (let i = 0; i < numbers.length; i++) {
+      const row = numbers[i];
+      for (let j = 0; j < max; j++) {
+        let x;
+        let y;
+        if (place === 'left') {
+          x = j * cellSize;
+          y = i * cellSize;
+        } else {
+          x = i * cellSize;
+          y = j * cellSize;
+        }
+        const rect = document.createElement('rect');
+        rect.setAttribute('width', String(cellSize));
+        rect.setAttribute('height', String(cellSize));
+        rect.setAttribute('x', String(x));
+        rect.setAttribute('y', String(y));
+        if (j >= max - row.length) {
+          rect.setAttribute('fill', String(row[j - max + row.length].fill));
+        } else {
+          rect.setAttribute('fill', '#ccc');
+        }
+        g.append(rect);
+      }
+    }
+    return g;
+  }
+  function findMaxNumbers(arr: svgNumbers[][]): number {
+    let max = 0;
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].length > max) {
+        max = arr[i].length;
+      }
+    }
+    return max;
+  }
+
   return (
     <div>
       {!prepare ?
@@ -145,7 +254,11 @@ function NonogramNew() {
               }
             </div>
           }
-          <svg width={svgSize.width} height={svgSize.height} ref={svg}>
+          <svg
+            className="svgNonogram"
+            width={svgSize.width}
+            height={svgSize.height}
+            ref={svg}>
             <g id="svgImg">
               {
                 svgData.map((item, i) => (
@@ -161,6 +274,9 @@ function NonogramNew() {
               }
             </g>
           </svg>
+          <button onClick={() => save()}>
+            Готово
+          </button>
         </div>
       }
     </div>
@@ -194,5 +310,10 @@ interface svgData {
   height: number,
   x: number,
   y: number,
-  fill?: string
+  fill: string | null
+}
+
+interface svgNumbers {
+  count: number,
+  fill: string
 }
