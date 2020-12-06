@@ -8,7 +8,21 @@ function NonogramNew() {
   const cellSize = 20;
   const defaultWidth = 10;
   const defaultHeight = 10;
-  const defaultColor = '#000';
+  const defaultColor = {
+    hex: '#000',
+      rgb: {
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 1,
+      },
+      hsl: {
+        h: 150,
+        s: 0,
+        l: 0,
+        a: 1,
+      },
+  };
 
   const svg = useRef<SVGSVGElement>(null);
 
@@ -16,9 +30,9 @@ function NonogramNew() {
   const [prepareData, setPrepareData] = useState({width: defaultWidth, height: defaultHeight, color: false});
   const [svgSize, setSvgSize] = useState({width: defaultWidth * cellSize, height: defaultHeight * cellSize});
   const [svgData, setSvgData] = useState<svgData[]>([]);
-  const [colors, setColors] = useState([defaultColor]);
+  const [colors, setColors] = useState<ColorResult[]>([defaultColor]);
   const [showColorPicker, setShowColorPicker] = useState(false);
-  const [currentColorPicker, setCurrentColorPicker] = useState(defaultColor);
+  const [currentColorPicker, setCurrentColorPicker] = useState<ColorResult>(defaultColor);
   const [currentColorPickerIndex, setCurrentColorPickerIndex] = useState(0);
   const [currentColor, setCurrentColor] = useState(0);
   const [cells, setCells] = useState<NodeListOf<SVGRectElement>>();
@@ -49,15 +63,15 @@ function NonogramNew() {
     e.preventDefault();
     setPrepare(true);
   }
-  function openColorPicker(color: string, index: number) {
+  function openColorPicker(color: ColorResult, index: number) {
     setShowColorPicker(true);
     setCurrentColorPicker(color);
     setCurrentColorPickerIndex(index);
   }
   function changeColorPicker(color: ColorResult) {
     const newColors = [...colors];
-    newColors[currentColorPickerIndex] = color.hex;
-    setCurrentColorPicker(color.hex);
+    newColors[currentColorPickerIndex] = color;
+    setCurrentColorPicker(color);
     setColors(newColors);
   }
   function deleteColor(index: number) {
@@ -127,8 +141,27 @@ function NonogramNew() {
       topNumberSvg.setAttribute('transform', `translate(${spacingLeft})`);
       svgClone.setAttribute('width', String(svgSize.width + spacingLeft));
       svgClone.setAttribute('height', String(svgSize.height + spacingTop));
+      addLines(svgClone, spacingLeft, spacingTop);
       console.log(svgClone);
     }
+  }
+  function addLines(svg: SVGSVGElement, left: number, top: number) {
+    const fiveCells = 5 * cellSize;
+    for (let i = left + fiveCells; i < svgSize.width; i += fiveCells) {
+      createLine(i, i, 0, svgSize.height + top, svg);
+    }
+    for (let i = top + fiveCells; i < svgSize.height; i += fiveCells) {
+      createLine(0, svgSize.width + left, i, i, svg);
+    }
+  }
+  function createLine(x1: number, x2: number, y1: number, y2: number, svg: SVGSVGElement) {
+    const line = document.createElement('line');
+    line.setAttribute('x1', String(x1));
+    line.setAttribute('x2', String(x2));
+    line.setAttribute('y1', String(y1));
+    line.setAttribute('y2', String(y2));
+    line.setAttribute('stroke', '#000');
+    svg.append(line);
   }
   function fillNumbers(numbers: svgNumbers[][], direction?: string) {
     let row = 0;
@@ -173,6 +206,7 @@ function NonogramNew() {
   }
   function createNumbers(numbers: svgNumbers[][], max: number, place = 'left'): HTMLElement {
     const g = document.createElement('g');
+    g.className = 'svgNumbers';
     for (let i = 0; i < numbers.length; i++) {
       const row = numbers[i];
       for (let j = 0; j < max; j++) {
@@ -191,11 +225,23 @@ function NonogramNew() {
         rect.setAttribute('x', String(x));
         rect.setAttribute('y', String(y));
         if (j >= max - row.length) {
-          rect.setAttribute('fill', String(row[j - max + row.length].fill));
+          const gRect = document.createElement('g');
+          const numberCell = row[j - max + row.length];
+          rect.setAttribute('fill', numberCell.fill.hex);
+          const text = document.createElement('text');
+          text.setAttribute('x', String(x));
+          text.setAttribute('y', String(y));
+          text.innerText = String(numberCell.count);
+          if (numberCell.fill.hsl.l < 0.5) {
+            text.className = 'fill-white';
+          }
+          gRect.append(rect);
+          gRect.append(text);
+          g.append(gRect);
         } else {
           rect.setAttribute('fill', '#ccc');
+          g.append(rect);
         }
-        g.append(rect);
       }
     }
     return g;
@@ -247,7 +293,7 @@ function NonogramNew() {
                 <div className="color-popover">
                   <div onClick={() => setShowColorPicker(false)} className="color-cover"/>
                   <ChromePicker
-                    color={currentColorPicker}
+                    color={currentColorPicker.hex}
                     onChange={(color) => changeColorPicker(color)}
                   />
                 </div>
@@ -269,7 +315,7 @@ function NonogramNew() {
                     y={item.y}
                     height={item.height}
                     width={item.width}
-                    style={{fill: item.fill || '#fff'}}/>
+                    style={{fill: item.fill?.hex || '#fff'}}/>
                 ))
               }
             </g>
@@ -310,10 +356,10 @@ interface svgData {
   height: number,
   x: number,
   y: number,
-  fill: string | null
+  fill: ColorResult | null
 }
 
 interface svgNumbers {
   count: number,
-  fill: string
+  fill: ColorResult
 }

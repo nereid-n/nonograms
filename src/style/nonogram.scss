@@ -1,7 +1,18 @@
 .svgNonogram {
   rect {
-    stroke: #000;
+    stroke: #8a8a8a;
   }
+}
+
+.svgNumbers {
+  text {
+    font-size: 20px;
+    transform: translate(6px, 15px);
+  }
+}
+
+.fill-white {
+  fill: white;
 }
 
 .color {
