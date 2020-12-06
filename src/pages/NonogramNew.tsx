@@ -3,6 +3,7 @@ import Input, {dataInput} from "../components/form/Input";
 import Checkbox, {dataCheckbox} from "../components/form/Checkbox";
 import {ChromePicker, ColorResult} from 'react-color';
 import "../style/nonogram.scss";
+import axios from "axios";
 
 function NonogramNew() {
   const cellSize = 20;
@@ -27,7 +28,7 @@ function NonogramNew() {
   const svg = useRef<SVGSVGElement>(null);
 
   const [prepare, setPrepare] = useState(false);
-  const [prepareData, setPrepareData] = useState({width: defaultWidth, height: defaultHeight, color: false});
+  const [prepareData, setPrepareData] = useState<any>({width: defaultWidth, height: defaultHeight, color: false, name: 'Без имени'});
   const [svgSize, setSvgSize] = useState({width: defaultWidth * cellSize, height: defaultHeight * cellSize});
   const [svgData, setSvgData] = useState<svgData[]>([]);
   const [colors, setColors] = useState<ColorResult[]>([defaultColor]);
@@ -142,7 +143,7 @@ function NonogramNew() {
       svgClone.setAttribute('width', String(svgSize.width + spacingLeft));
       svgClone.setAttribute('height', String(svgSize.height + spacingTop));
       addLines(svgClone, spacingLeft, spacingTop);
-      console.log(svgClone);
+      send(svgClone);
     }
   }
   function addLines(svg: SVGSVGElement, left: number, top: number) {
@@ -255,11 +256,37 @@ function NonogramNew() {
     }
     return max;
   }
+  function send(svg: SVGSVGElement) {
+    let newData = {...prepareData};
+    newData.color = newData.color ? 1 : 0;
+    let formData: FormData = new FormData();
+    for (let key in newData) {
+      formData.append(key, String(newData[key]));
+    }
+    formData.append('img', new Blob([svg.outerHTML], {type:"image/svg+xml;charset=utf-8"}));
+    const config = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    };
+    axios.post(`${process.env.REACT_APP_API}nonograms/add`, formData, config)
+      .then(res => {
+        console.log(res)
+        // history.push('/');
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
 
   return (
     <div>
       {!prepare ?
         <form noValidate onSubmit={(e) => createSvg(e)}>
+          <Input
+            data={name}
+            onChange={(e) => setPrepareData({...prepareData, [e.target.name]: e.target.value})}/>
           <Input
             data={width}
             onChange={(e) => setPrepareData({...prepareData, [e.target.name]: e.target.value})}/>
@@ -330,6 +357,13 @@ function NonogramNew() {
 }
 
 export default NonogramNew;
+
+const name: dataInput = {
+  name: 'name',
+  type: 'text',
+  label: 'Название',
+  id: 'name'
+}
 
 const width: dataInput = {
   name: 'width',
